@@ -6,7 +6,7 @@ import Search from './Search';
 
 class Nav extends Component {
     state = {
-        ChosenLocation: '',
+        ChosenLocation: ''
         
     }
     handleChange = (event) => {
@@ -15,8 +15,9 @@ class Nav extends Component {
             return {ChosenLocation: value};
         })
     }
+    
+
     render() {
-        const location = this.state.ChosenLocation;
         return (
             <div className='nav'>
                 <Link className='header' to='/'>
@@ -27,16 +28,18 @@ class Nav extends Component {
                         className='nav-input-field'
                         id='location'
                         placeholder='St. George, Utah'
+                        value={this.state.ChosenLocation}
                         type='text'
-                        value={location}
+                        onFocus="this.value=''"
                         autoComplete='off'
+                        
                         onChange={this.handleChange}
                     />
                        <Link
                             className='nav-button'
                             to={{
                                 pathname: '/forcast',
-                                search: `${location ? "?q=" + location : "INVALID"}` 
+                                search: `${this.state.ChosenLocation ? "?q=" + this.state.ChosenLocation : "INVALID"}` 
                             }}
                             
                             >

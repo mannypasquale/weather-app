@@ -5,6 +5,7 @@ import {getProfile} from '../utils/api';
 import {getRepos} from '../utils/api';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import {Nav} from './Home';
 // console.log(getWeather());
 // console.log(this.props);
 
@@ -37,11 +38,17 @@ function badResult() {
 class Forcast extends Component {
     state = {
         Weather: null,
-        isValidInput: false 
+        isValidInput: false
     }
     componentDidMount() {
         this.updateWeather();
     }
+    componentDidUpdate(prevProps) {
+        // Typical usage (don't forget to compare props):
+        if (this.props.location.search !== prevProps.location.search) {
+          this.updateWeather();
+        }
+      }
     updateWeather = () => {
         let weather;
         getWeather(this.props.location.search).then( (data) => {
@@ -67,7 +74,8 @@ class Forcast extends Component {
 
 
         return (
-            <div className='results'>
+            <div className='forcast-container'>
+            <Nav />
             
                 {!this.state.isValidInput 
                     ? <p className='loading-page'>Loading</p> : <WeatherResult weather={this.state.Weather} />

@@ -12,7 +12,6 @@ class App extends Component {
       <Router>
         <div className='container'>
 
-          <Nav />
           <Switch>
             <Route exact path='/' component={Home} />
             <Route path='/forcast' component={Forcast} />
