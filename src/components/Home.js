@@ -14,16 +14,16 @@ class Home extends Component {
         })
     }
 
-    handleSubmit = (event) => {
-        let x = this.state.ChosenLocation.split(',');
-        console.log(this);
-        this.setState(() => ({
-            ChosenLocation: "fuck"
+    // handleSubmit = (event) => {
+        
+    //     console.log(this);
+    //     this.setState(() => ({
+    //         ChosenLocation: location
            
-      }));
+    //   }));
         
         
-    }
+    // }
     
     render() {
         const location = this.state.ChosenLocation;
@@ -38,8 +38,8 @@ class Home extends Component {
                     Enter a City and State
                 </h3>
                 <div className='location-container'>
-                <form className='search-block'>
                     <input
+                        className='input-field'
                         id='location'
                         placeholder='St. George, Utah'
                         type='text'
@@ -47,23 +47,21 @@ class Home extends Component {
                         autoComplete='off'
                         onChange={this.handleChange}
                     />
-                        <Link
+                        
+                </div>
+                <div className='but'>
+                <Link
                             className='button'
-                            onClick={() => this.handleSubmit()}
                             to={{
                                 pathname: '/forcast',
-                                search: `?q=${location}`
+                                search: `${location ? "?q=" + location : "INVALID"}` 
                             }}
                             
                             >
-                            
                             Get Weather
+                            
                         </Link>
-                    
-                </form>
-                
-
-                </div>
+                        </div>
             </div>
         );
     }
