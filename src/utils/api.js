@@ -12,7 +12,7 @@ export function getWeather(city) {
     });
 }
 export function getForcast(city) {
-    return axios.get(`http://api.openweathermap.org/data/2.5/forecast${city}&APPID=${APIKEY}&cnt=3`)
+    return axios.get(`http://api.openweathermap.org/data/2.5/forecast${city}&APPID=${APIKEY}`)
     .then(function(data) {
         return data;
     }).catch(function(error) {
