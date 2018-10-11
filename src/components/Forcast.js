@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {getWeather} from '../utils/api';
-import {getProfile} from '../utils/api';
-import {getRepos} from '../utils/api';
-import axios from 'axios';
+import {getWeather, getForcast} from '../utils/api';
+
 import { Link } from 'react-router-dom';
 import {Nav} from './Home';
 // console.log(getWeather());
@@ -38,15 +36,18 @@ function badResult() {
 class Forcast extends Component {
     state = {
         Weather: null,
+        Forcast: null,
         isValidInput: false
     }
     componentDidMount() {
         this.updateWeather();
+        this.updateForcast();
     }
     componentDidUpdate(prevProps) {
         // Typical usage (don't forget to compare props):
         if (this.props.location.search !== prevProps.location.search) {
           this.updateWeather();
+          this.updateForcast();
         }
       }
     updateWeather = () => {
@@ -62,6 +63,20 @@ class Forcast extends Component {
             }))
         });
         
+    }
+
+    updateForcast = () => {
+        let forcast;
+        getForcast(this.props.location.search)
+            .then((data) => {
+                forcast = data.data;
+            }).catch((error) => {
+                console.log(error);
+            }).then(() => {
+                this.setState(() => ({
+                    Forcast: forcast
+                }))
+            });
     }
 
     handleReset = () => {
