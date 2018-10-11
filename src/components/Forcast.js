@@ -69,7 +69,7 @@ class Forcast extends Component {
         let forcast;
         getForcast(this.props.location.search)
             .then((data) => {
-                forcast = data.data;
+                forcast = data;
             }).catch((error) => {
                 console.log(error);
             }).then(() => {
