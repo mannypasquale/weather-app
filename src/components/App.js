@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import Home from './Home';
 import Forcast from './Forcast';
-import Nav from './Nav';
 import '../App.css';
 import '../index.css';
 

@@ -1,67 +1,122 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import {getWeather, getForcast} from '../utils/api';
+import {getForcast} from '../utils/api';
 
 import { Link } from 'react-router-dom';
 import {Nav} from './Home';
 // console.log(getWeather());
 // console.log(this.props);
 
+
 function WeatherResult(props) {
     console.log(props);
+    console.log(props.getDate(props.weather.forcast[0].date));
     if (!props.weather) {
         return <div><p>Invalid Input Reset to try again</p></div>;
     } else {
         return (
-        
-            <ul className='weather-list'>
-                <li><h1>{props.weather.name}</h1></li>
-                <li>Temp: {props.weather.main.temp - 273.15}</li>
-                <li>Temp High: {props.weather.main.temp_max -  273.15}</li>
-                <li>Temp Low: {props.weather.main.temp_min -  273.15}</li>
-                <li>Description: {props.weather.weather[0].description}</li>
+            <ul className="weather-list">
+                {props.weather.forcast.map(function (weather) {
+                    return (
+                        <li className="weather-item">{weather.city}
+                            <ul className="space-weather-item">
+                                <li>{weather.date}</li>
+                                <li>{weather.description}</li>
+                                <li>{weather.humidity}</li>
+                                <li>{weather.temp_max}</li>
+                                <li>{weather.temp_min}</li>
+                            </ul>
+                        </li>
+                    )
+                })}
             </ul>
+            
         );
     }
 }
 
-function badResult() {
-    return (
-        <div><p>BAD RES</p></div>
-    )
-}
+
 
 
 
 class Forcast extends Component {
     state = {
         Weather: null,
-        Forcast: null,
         isValidInput: false
     }
     componentDidMount() {
+        // this.updateForcast();
         this.updateWeather();
-        this.updateForcast();
     }
     componentDidUpdate(prevProps) {
         // Typical usage (don't forget to compare props):
         if (this.props.location.search !== prevProps.location.search) {
           this.updateWeather();
-          this.updateForcast();
         }
       }
     updateWeather = () => {
-        let weather;
-        getWeather(this.props.location.search).then( (data) => {
-            weather = data.data;
-        }).catch((error) => {
-            console.log("FALIDED REQUEST" + error);
-        }).then(() => {
-            this.setState(() => ({
-                Weather: weather,
-                isValidInput: true
-            }))
-        });
+        // let weather;
+        // getWeather(this.props.location.search)
+        // .then( (data) => {
+        //     weather = data.data;
+        // }).catch((error) => {
+        //     console.log("FALIDED REQUEST" + error);
+        // }).then(() => {
+        //     this.setState(() => ({
+        //         Weather: weather,
+        //         isValidInput: true
+        //     }))
+        // });
+        let forcast;
+        
+        getForcast(this.props.location.search)
+            .then((data) => {
+                forcast = data;
+            }).catch((error) => {
+                console.log(error);
+            }).then(() => {
+                // here i need to make a new object iwht needed info with the new
+                // min/max/description/humitdiy
+                let extractedForcast = {
+                    city: forcast.city.name,
+                    country: forcast.city.country,
+                    forcast: []
+
+                }
+                //need this to only return the 5 days
+                 let x = forcast.list.map(function (weather) {
+
+                    return (
+                        {
+                            date: new Date(weather.dt_txt).toDateString(),
+                            temp_min: weather.main.temp_min,
+                            temp_max: weather.main.temp_max,
+                            humidity: weather.main.humidity,
+                            description: weather.weather[0].description,
+                            icon: weather.weather[0].icon
+
+                            
+                        }
+                    );
+                });
+                let y = [];
+                for (let i = 0; i < x.length; i++){
+                    if (y.includes(x[i].date)){
+                        console.log('isthere');
+                    } else {
+                        y.push(x[i]);
+                    }
+                }
+                console.log(y);
+                
+               
+                extractedForcast.forcast = x;
+
+                console.log(extractedForcast);
+                this.setState(() => ({
+                    Weather: extractedForcast,
+                    isValidInput: true
+                }))
+            });
         
     }
 
@@ -69,7 +124,7 @@ class Forcast extends Component {
         let forcast;
         getForcast(this.props.location.search)
             .then((data) => {
-                forcast = data;
+                forcast = data.data;
             }).catch((error) => {
                 console.log(error);
             }).then(() => {
@@ -85,15 +140,21 @@ class Forcast extends Component {
         }));
     }
 
-    render() {
+    getDate = (dateString) => {
+        let date = new Date(dateString);
+        return date;
+    }
 
+    render() {
+        
+        
 
         return (
             <div className='forcast-container'>
             <Nav />
             
                 {!this.state.isValidInput 
-                    ? <p className='loading-page'>Loading</p> : <WeatherResult weather={this.state.Weather} />
+                    ? <p className='loading-page'>Loading</p> : <WeatherResult weather={this.state.Weather} forcast={this.state.Forcast} getDate={this.getDate} />
 
                 }
                 

@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
-import LocationInput from './LocationInput';
-import Search from './Search';
+
 
 class Nav extends Component {
     state = {

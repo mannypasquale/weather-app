@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 class Nav extends Component {
     state = {
@@ -24,7 +23,7 @@ class Nav extends Component {
                 <input
                         className='nav-input-field'
                         id='location'
-                        placeholder='St. George, Utah'
+                        placeholder='Victoria, CA'
                         value={this.state.ChosenLocation}
                         type='text'
                         onFocus="this.value=''"
@@ -32,6 +31,7 @@ class Nav extends Component {
                         
                         onChange={this.handleChange}
                     />
+                
                        <Link
                             className='nav-button'
                             to={{
@@ -85,14 +85,15 @@ class Home extends Component {
             <div>
             <Nav />
             <div className='home-container'>
+            <div className='home-container-inner'>
                 <h3>
-                    Enter a City and State
+                    Enter a City and Country Code
                 </h3>
                 <div className='location-container'>
                     <input
                         className='input-field'
                         id='location'
-                        placeholder='St. George, Utah'
+                        placeholder='Victoria, CA'
                         type='text'
                         value={location}
                         autoComplete='off'
@@ -113,6 +114,7 @@ class Home extends Component {
                             
                         </Link>
                         </div>
+            </div>
             </div>
             </div>
         );
