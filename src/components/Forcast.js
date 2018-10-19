@@ -1,29 +1,48 @@
 import React, { Component } from 'react';
 import {getForcast} from '../utils/api';
-
 import { Link } from 'react-router-dom';
 import {Nav} from './Home';
+import InlineSVG from 'svg-inline-react';
+
 // console.log(getWeather());
 // console.log(this.props);
 
 
+//write a for loop and split off of first space and see if it matches the 
+// next item in array fri mon etc and moves on if it does
+// each one is a linl
+
 function WeatherResult(props) {
-    console.log(props);
-    console.log(props.getDate(props.weather.forcast[0].date));
+    //console.log(props);
+    //console.log(props.getDate(props.weather.forcast[0].date));
     if (!props.weather) {
         return <div><p>Invalid Input Reset to try again</p></div>;
     } else {
+        let fiveDay = [];
+        let dayOfWeek = []
+        let day;
+        for (let i = 0; i < props.weather.forcast.length; i ++){
+            day = props.weather.forcast[i].date.split(' ');
+            day = day[0];
+            console.log(day);
+            if (dayOfWeek.includes(day)){
+                continue;
+            }
+            dayOfWeek.push(day);
+            fiveDay.push(props.weather.forcast[i]);
+        }
+        console.log(fiveDay);
         return (
             <ul className="weather-list">
-                {props.weather.forcast.map(function (weather) {
+                {fiveDay.map(function (weather) {
+                    let Icon = require(`../images/weather-icons/${weather.icon}.svg`);
                     return (
+                        //each of these will be a link!!!
                         <li className="weather-item">{weather.city}
                             <ul className="space-weather-item">
+                                <li className="icon"><img src={Icon} /></li>
                                 <li>{weather.date}</li>
-                                <li>{weather.description}</li>
-                                <li>{weather.humidity}</li>
-                                <li>{weather.temp_max}</li>
-                                <li>{weather.temp_min}</li>
+                                
                             </ul>
                         </li>
                     )
