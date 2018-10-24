@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import {getForcast} from '../utils/api';
+import { getForcast } from '../utils/api';
 import { Link } from 'react-router-dom';
-import {Nav} from './Home';
-import InlineSVG from 'svg-inline-react';
+import { Nav } from './Home';
 
 // console.log(getWeather());
 // console.log(this.props);
@@ -12,44 +11,101 @@ import InlineSVG from 'svg-inline-react';
 // next item in array fri mon etc and moves on if it does
 // each one is a linl
 
-function WeatherResult(props) {
-    //console.log(props);
-    //console.log(props.getDate(props.weather.forcast[0].date));
-    if (!props.weather) {
-        return <div><p>Invalid Input Reset to try again</p></div>;
-    } else {
+function Day(props) {
+    let Icon = require(`../images/weather-icons/${props.location.state.weather.icon}.svg`);
+    console.log
+    return (
+        <div className='day-container'>
+            <Nav />
+
+            <ul className='day-list'>
+                <li><img className='icon' src={Icon} /></li>
+                <li>{props.location.state.weather.date}</li>
+                <li></li>
+                <li>{`${props.location.state.City}, ${props.location.state.Country}`}</li>
+                <li>{props.location.state.weather.description}</li>
+                <li>min temp: {props.location.state.weather.temp_min} Degrees</li>
+                <li>max temp: {props.location.state.weather.temp_max} Degrees</li>
+                <li>Humidity: {props.location.state.weather.humidity}</li>
+            </ul>
+            <Link
+                    className='button'
+                    to='/'
+                    onClick={() => this.handleReset()}>
+                    Reset
+                        </Link> 
+        </div>
+        
+    )
+}
+
+class WeatherResult extends Component {
+    state = {
+        Weather: null,
+        Country: null,
+        City: null
+    }
+
+    componentDidMount() {
+        // this.updateForcast();
+        this.updateWeather();
+    }
+
+    updateWeather = () => {
         let fiveDay = [];
         let dayOfWeek = []
         let day;
-        for (let i = 0; i < props.weather.forcast.length; i ++){
-            day = props.weather.forcast[i].date.split(' ');
+        console.log(this.props.weather.city);
+        for (let i = 0; i < this.props.weather.forcast.length; i++) {
+            day = this.props.weather.forcast[i].date.split(' ');
             day = day[0];
-            console.log(day);
-            if (dayOfWeek.includes(day)){
+            if (dayOfWeek.includes(day)) {
                 continue;
             }
             dayOfWeek.push(day);
-            fiveDay.push(props.weather.forcast[i]);
+            fiveDay.push(this.props.weather.forcast[i]);
         }
-        console.log(fiveDay);
-        return (
-            <ul className="weather-list">
-                {fiveDay.map(function (weather) {
-                    let Icon = require(`../images/weather-icons/${weather.icon}.svg`);
-                    return (
-                        //each of these will be a link!!!
-                        <li className="weather-item">{weather.city}
-                            <ul className="space-weather-item">
-                                <li className="icon"><img src={Icon} /></li>
-                                <li>{weather.date}</li>
-                                
-                            </ul>
-                        </li>
-                    )
-                })}
-            </ul>
-            
-        );
+        this.setState(() => ({
+            Weather: fiveDay,
+            Country: this.props.weather.country,
+            City: this.props.weather.city
+        }));
+    }
+
+    render() {
+        if (!this.state.Weather) {
+            return <div><p>Invalid Input Reset to try again</p></div>;
+        } else {
+            console.log(this.state);
+            let city = this.state.City;
+            let country = this.state.Country;
+            return (
+                <div>
+                    <h1>{`${this.state.City}, ${this.state.Country}`}</h1>
+                    <ul className="weather-list">
+                        {this.state.Weather.map(function (weather) {
+                            let Icon = require(`../images/weather-icons/${weather.icon}.svg`);
+                            return (
+                                //each of these will be a link!!!
+                                <li className="weather-item">{weather.city}
+                                    <ul className="space-weather-item">
+                                        <li><Link to={{
+                                            pathname: '/forcast/day',
+                                            state: {
+                                                weather: weather,
+                                                City: city,
+                                                Country: country
+                                            }
+                                        }} ><img className='icon-list' src={Icon} /></Link></li>
+                                        <li>{weather.date}</li>
+                                    </ul>
+                                </li>
+                            )
+                        })}
+                    </ul>
+                </div>
+            );
+        }
     }
 }
 
@@ -60,7 +116,8 @@ function WeatherResult(props) {
 class Forcast extends Component {
     state = {
         Weather: null,
-        isValidInput: false
+        isValidInput: null
+
     }
     componentDidMount() {
         // this.updateForcast();
@@ -69,74 +126,73 @@ class Forcast extends Component {
     componentDidUpdate(prevProps) {
         // Typical usage (don't forget to compare props):
         if (this.props.location.search !== prevProps.location.search) {
-          this.updateWeather();
+            this.updateWeather();
         }
-      }
+    }
     updateWeather = () => {
-        // let weather;
-        // getWeather(this.props.location.search)
-        // .then( (data) => {
-        //     weather = data.data;
-        // }).catch((error) => {
-        //     console.log("FALIDED REQUEST" + error);
-        // }).then(() => {
-        //     this.setState(() => ({
-        //         Weather: weather,
-        //         isValidInput: true
-        //     }))
-        // });
-        let forcast;
-        
-        getForcast(this.props.location.search)
-            .then((data) => {
-                forcast = data;
-            }).catch((error) => {
-                console.log(error);
-            }).then(() => {
-                // here i need to make a new object iwht needed info with the new
-                // min/max/description/humitdiy
-                let extractedForcast = {
-                    city: forcast.city.name,
-                    country: forcast.city.country,
-                    forcast: []
+        if (!this.props.location.search) {
+            console.log("NO DATA");
+        } else {
 
-                }
-                //need this to only return the 5 days
-                 let x = forcast.list.map(function (weather) {
 
-                    return (
-                        {
-                            date: new Date(weather.dt_txt).toDateString(),
-                            temp_min: weather.main.temp_min,
-                            temp_max: weather.main.temp_max,
-                            humidity: weather.main.humidity,
-                            description: weather.weather[0].description,
-                            icon: weather.weather[0].icon
+            let forcast;
 
-                            
-                        }
-                    );
-                });
-                let y = [];
-                for (let i = 0; i < x.length; i++){
-                    if (y.includes(x[i].date)){
-                        console.log('isthere');
-                    } else {
-                        y.push(x[i]);
+            getForcast(this.props.location.search)
+                .then((data) => {
+                    forcast = data;
+                }).catch((error) => {
+                    console.log(error);
+                }).then(() => {
+                    // here i need to make a new object iwht needed info with the new
+                    // min/max/description/humitdiy
+
+                    //need this to only return the 5 days
+
+                    //check if valid input returned
+                    if (!forcast){
+                        this.setState(() => ({
+                            isValidInput: false
+                        }));
+                        return;
                     }
-                }
-                console.log(y);
-                
-               
-                extractedForcast.forcast = x;
+                    let x = forcast.list.map(function (weather) {
 
-                console.log(extractedForcast);
-                this.setState(() => ({
-                    Weather: extractedForcast,
-                    isValidInput: true
-                }))
-            });
-        
+                        return (
+                            {
+                                date: new Date(weather.dt_txt).toDateString(),
+                                temp_min: weather.main.temp_min,
+                                temp_max: weather.main.temp_max,
+                                humidity: weather.main.humidity,
+                                description: weather.weather[0].description,
+                                icon: weather.weather[0].icon
+
+
+                            }
+                        );
+                    });
+                    let y = [];
+                    for (let i = 0; i < x.length; i++) {
+                        if (y.includes(x[i].date)) {
+                            console.log('isthere');
+                        } else {
+                            y.push(x[i]);
+                        }
+                    }
+
+
+                    let extractedForcast = {
+                        city: forcast.city.name,
+                        country: forcast.city.country,
+                        forcast: x
+                    }
+
+                    this.setState(() => ({
+                        Weather: extractedForcast,
+                        isValidInput: true
+                    }))
+                });
+
+        }
     }
 
     updateForcast = () => {
@@ -165,20 +221,28 @@ class Forcast extends Component {
     }
 
     render() {
-        
-        
 
+        let checkInput = this.state.isValidInput;
+        let weather;
+        if (checkInput){
+            weather = <WeatherResult weather={this.state.Weather} forcast={this.state.Forcast} getDate={this.getDate} />;
+        } 
+        
         return (
             <div className='forcast-container'>
-            <Nav />
-            
-                {!this.state.isValidInput 
+                <Nav />
+
+                {/* {!this.state.isValidInput
                     ? <p className='loading-page'>Loading</p> : <WeatherResult weather={this.state.Weather} forcast={this.state.Forcast} getDate={this.getDate} />
 
-                }
+                } */}
+
+                {weather ? weather : <p>invalid input</p>}
+
                 
+
                 <Link
-                    className='reset'
+                    className='button'
                     to='/'
                     onClick={() => this.handleReset()}>
                     Reset
@@ -189,3 +253,4 @@ class Forcast extends Component {
 
 
 export default Forcast;
+export { Day };

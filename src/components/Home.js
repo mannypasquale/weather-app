@@ -26,7 +26,6 @@ class Nav extends Component {
                         placeholder='Victoria, CA'
                         value={this.state.ChosenLocation}
                         type='text'
-                        onFocus="this.value=''"
                         autoComplete='off'
                         
                         onChange={this.handleChange}
@@ -61,31 +60,15 @@ class Home extends Component {
             return {ChosenLocation: value};
         })
     }
-
-    // handleSubmit = (event) => {
-        
-    //     console.log(this);
-    //     this.setState(() => ({
-    //         ChosenLocation: location
-           
-    //   }));
-        
-        
-    // }
     
     render() {
         const location = this.state.ChosenLocation;
-        
 
-
-
-        
         return (
             
             <div>
             <Nav />
             <div className='home-container'>
-            <div className='home-container-inner'>
                 <h3>
                     Enter a City and Country Code
                 </h3>
@@ -114,7 +97,6 @@ class Home extends Component {
                             
                         </Link>
                         </div>
-            </div>
             </div>
             </div>
         );
