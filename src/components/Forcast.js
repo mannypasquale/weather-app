@@ -3,23 +3,17 @@ import { getForcast } from '../utils/api';
 import { Link } from 'react-router-dom';
 import { Nav } from './Home';
 
-// console.log(getWeather());
-// console.log(this.props);
 
-
-//write a for loop and split off of first space and see if it matches the 
-// next item in array fri mon etc and moves on if it does
-// each one is a linl
 
 function Day(props) {
     let Icon = require(`../images/weather-icons/${props.location.state.weather.icon}.svg`);
-    console.log
+    console.log(props);
     return (
         <div className='day-container'>
             <Nav />
 
             <ul className='day-list'>
-                <li><img className='icon' src={Icon} /></li>
+                <li><img className='icon' src={Icon} alt='asfd' /></li>
                 <li>{props.location.state.weather.date}</li>
                 <li></li>
                 <li>{`${props.location.state.City}, ${props.location.state.Country}`}</li>
@@ -27,15 +21,31 @@ function Day(props) {
                 <li>min temp: {props.location.state.weather.temp_min} Degrees</li>
                 <li>max temp: {props.location.state.weather.temp_max} Degrees</li>
                 <li>Humidity: {props.location.state.weather.humidity}</li>
-            </ul>
-            <Link
+                <li>
+                <Link 
+                    className='button'
+                    to={{
+                        pathname: '/forcast',
+                        search: `${props.location ? "?q=" + props.location.state.City + "," +
+                        props.location.state.Country : "INVALID"}` 
+                    }}>
+                    Back  
+                </Link>
+                &nbsp;
+                &nbsp;                
+                <Link
                     className='button'
                     to='/'
                     onClick={() => this.handleReset()}>
                     Reset
-                        </Link> 
+                </Link>
+                
+                 </li>
+
+            </ul>
+
         </div>
-        
+
     )
 }
 
@@ -96,7 +106,7 @@ class WeatherResult extends Component {
                                                 City: city,
                                                 Country: country
                                             }
-                                        }} ><img className='icon-list' src={Icon} /></Link></li>
+                                        }} ><img className='icon-list' src={Icon} alt='asdf' /></Link></li>
                                         <li>{weather.date}</li>
                                     </ul>
                                 </li>
@@ -149,7 +159,7 @@ class Forcast extends Component {
                     //need this to only return the 5 days
 
                     //check if valid input returned
-                    if (!forcast){
+                    if (!forcast) {
                         this.setState(() => ({
                             isValidInput: false
                         }));
@@ -222,24 +232,24 @@ class Forcast extends Component {
 
     render() {
 
-        let checkInput = this.state.isValidInput;
-        let weather;
-        if (checkInput){
-            weather = <WeatherResult weather={this.state.Weather} forcast={this.state.Forcast} getDate={this.getDate} />;
-        } 
-        
+        // let checkInput = this.state.isValidInput;
+        // let weather;
+        // if (checkInput){
+        //     weather = <WeatherResult weather={this.state.Weather} forcast={this.state.Forcast} getDate={this.getDate} />;
+        // } 
+
         return (
             <div className='forcast-container'>
                 <Nav />
 
-                {/* {!this.state.isValidInput
+                {!this.state.isValidInput
                     ? <p className='loading-page'>Loading</p> : <WeatherResult weather={this.state.Weather} forcast={this.state.Forcast} getDate={this.getDate} />
 
-                } */}
+                }
 
-                {weather ? weather : <p>invalid input</p>}
+                {/* {weather ? weather : <p>invalid input</p>} */}
 
-                
+
 
                 <Link
                     className='button'

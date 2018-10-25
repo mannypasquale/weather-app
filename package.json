@@ -13,6 +13,7 @@
     "svg-inline-react": "^3.1.0",
     "whatwg-fetch": "^3.0.0"
   },
+  "homepage": "http://www.mannypasquale.me/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
